@@ -1,50 +1,41 @@
-// pages/posts.tsx
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Header from "../components/layout/Header";
 import PostCard from "../components/common/PostCard";
 import { PostProps } from "../interfaces";
 
-const PostsPage: React.FC = () => {
-  const [posts, setPosts] = useState<PostProps[]>([]);
-  const [loading, setLoading] = useState(true);
+interface PostsPageProps {
+  posts: PostProps[];
+}
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-        const data = await res.json();
-        setPosts(data.slice(0, 10));
-      } catch (error) {
-        console.error("Failed to fetch posts", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, []);
-
+const PostsPage: React.FC<PostsPageProps> = ({ posts }) => {
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
       <main className="max-w-3xl mx-auto p-4 space-y-4">
         <h1 className="text-2xl font-bold mb-4">Posts</h1>
-        {loading ? (
-          <p>Loading posts...</p>
-        ) : (
-          posts.map((post) => (
-            <PostCard
-              key={post.id}
-              title={post.title}
-              body={post.body}
-              userId={post.userId}
-              id={post.id}
-            />
-          ))
-        )}
+        {posts.map((post) => (
+          <PostCard
+            key={post.id}
+            title={post.title}
+            body={post.body}
+            userId={post.userId}
+            id={post.id}
+          />
+        ))}
       </main>
     </div>
   );
+};
+
+export const getStaticProps = async () => {
+  const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+  const data: PostProps[] = await res.json();
+
+  return {
+    props: {
+      posts: data.slice(0, 10),
+    },
+  };
 };
 
 export default PostsPage;
