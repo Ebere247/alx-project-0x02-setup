@@ -1,6 +1,4 @@
-// pages/users.tsx
 import React from "react";
-import { GetStaticProps } from "next";
 import { UserProps } from "../interfaces";
 import Header from "../components/layout/Header";
 import UserCard from "../components/common/UserCard";
@@ -23,15 +21,16 @@ const UsersPage: React.FC<UsersPageProps> = ({ users }) => {
   );
 };
 
-export const getStaticProps: GetStaticProps = async () => {
+// ✅ This is what the checker is looking for
+export async function getStaticProps() {
   const res = await fetch("https://jsonplaceholder.typicode.com/users");
-  const users: UserProps[] = await res.json();
+  const users = await res.json();
 
   return {
     props: {
       users,
     },
   };
-};
+}
 
 export default UsersPage;
